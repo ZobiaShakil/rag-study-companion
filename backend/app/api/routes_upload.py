@@ -50,7 +50,8 @@ async def upload_file(file: UploadFile = File(...)):
         chunks = process_file(
             str(temp_path),
             chunk_size=settings.chunk_size,
-            overlap=settings.chunk_overlap
+            overlap=settings.chunk_overlap,
+            original_filename=file.filename  
         )
 
         if not chunks:

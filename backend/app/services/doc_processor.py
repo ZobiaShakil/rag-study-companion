@@ -14,9 +14,10 @@ class TextChunk:
     page: int
 
 
-def extract_text_from_pptx(file_path: str) -> list[TextChunk]:
+def extract_text_from_pptx(file_path: str, display_name: str = None) -> list[TextChunk]:
     chunks = []
     prs = Presentation(file_path)
+    source = display_name or Path(file_path).name      # use display_name
 
     for slide_num, slide in enumerate(prs.slides, start=1):
         slide_text = []
@@ -28,28 +29,25 @@ def extract_text_from_pptx(file_path: str) -> list[TextChunk]:
             combined = " ".join(slide_text)
             chunks.append(TextChunk(
                 text=combined,
-                source=Path(file_path).name,
+                source=source,             # now uses real filename
                 page=slide_num
             ))
-            logger.info(f"Extracted slide {slide_num} from {Path(file_path).name}")
-
     return chunks
 
 
-def extract_text_from_pdf(file_path: str) -> list[TextChunk]:
+def extract_text_from_pdf(file_path: str, display_name: str = None) -> list[TextChunk]:
     chunks = []
     reader = PdfReader(file_path)
+    source = display_name or Path(file_path).name      # use display_name
 
     for page_num, page in enumerate(reader.pages, start=1):
         text = page.extract_text()
         if text and text.strip():
             chunks.append(TextChunk(
                 text=text.strip(),
-                source=Path(file_path).name,
+                source=source,             # now uses real filename
                 page=page_num
             ))
-            logger.info(f"Extracted page {page_num} from {Path(file_path).name}")
-
     return chunks
 
 
@@ -89,15 +87,17 @@ def split_into_chunks(
 def process_file(
     file_path: str,
     chunk_size: int = 500,
-    overlap: int = 50
+    overlap: int = 50,
+    original_filename: str = None
 ) -> list[TextChunk]:
     path = Path(file_path)
     suffix = path.suffix.lower()
+    display_name = original_filename or path.name 
 
     if suffix == ".pptx":
-        raw_chunks = extract_text_from_pptx(file_path)
+        raw_chunks = extract_text_from_pptx(file_path, display_name)
     elif suffix == ".pdf":
-        raw_chunks = extract_text_from_pdf(file_path)
+        raw_chunks = extract_text_from_pdf(file_path, display_name)
     else:
         raise ValueError(f"Unsupported file type: {suffix}. Only .pptx and .pdf supported.")
 

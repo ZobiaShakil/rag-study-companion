@@ -4,8 +4,10 @@ from contextlib import asynccontextmanager
 from app.api.routes_upload import router as upload_router
 from app.core.logging_config import setup_logging
 from app.config import get_settings
+from app.api.routes_qa import router as qa_router
 
 logger = setup_logging()
+
 
 
 @asynccontextmanager
@@ -34,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(upload_router)
+app.include_router(qa_router)
 
 @app.get("/health")
 def health():
