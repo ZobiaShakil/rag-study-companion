@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-
+from app.api.routes_upload import router as upload_router
 from app.core.logging_config import setup_logging
 from app.config import get_settings
 
@@ -33,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(upload_router)
 
 @app.get("/health")
 def health():

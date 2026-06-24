@@ -3,7 +3,7 @@ import chromadb
 from chromadb.config import Settings as ChromaSettings
 from sentence_transformers import SentenceTransformer
 from app.config import get_settings
-from app.services.document_processor import TextChunk
+from app.services.doc_processor import TextChunk
 
 logger = logging.getLogger("study_companion")
 
