@@ -5,6 +5,7 @@ from app.api.routes_upload import router as upload_router
 from app.core.logging_config import setup_logging
 from app.config import get_settings
 from app.api.routes_qa import router as qa_router
+from app.api.routes_quiz import router as quiz_router
 
 logger = setup_logging()
 
@@ -37,6 +38,7 @@ app.add_middleware(
 
 app.include_router(upload_router)
 app.include_router(qa_router)
+app.include_router(quiz_router)
 
 @app.get("/health")
 def health():
