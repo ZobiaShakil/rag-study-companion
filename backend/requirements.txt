@@ -10,3 +10,5 @@ pypdf
 python-dotenv
 pytest
 httpx
+sqlalchemy
+aiosqlite

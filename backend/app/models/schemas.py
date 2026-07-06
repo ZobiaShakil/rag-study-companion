@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-
+from datetime import datetime
 
 class UploadResponse(BaseModel):
     message: str
@@ -47,3 +47,61 @@ class MCQQuestion(BaseModel):
 class QuizResponse(BaseModel):
     questions: list[MCQQuestion]
     collection_name: str
+
+# --- Subject schemas ---
+class SubjectCreate(BaseModel):
+    name: str
+
+class SubjectResponse(BaseModel):
+    id: int
+    name: str
+    created_at: datetime
+    file_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+# --- File schemas ---
+class FileResponse(BaseModel):
+    id: int
+    subject_id: int
+    filename: str
+    collection_name: str
+    uploaded_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# --- Quiz session schemas ---
+class QuizSessionCreate(BaseModel):
+    subject_id: int
+    file_id: int
+    score: int
+    total: int
+    results: list[dict]
+
+class QuizSessionResponse(BaseModel):
+    id: int
+    subject_id: int
+    file_id: int
+    score: int
+    total: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# --- Dashboard schemas ---
+class WeakTopic(BaseModel):
+    topic: str
+    wrong_count: int
+
+class SubjectStats(BaseModel):
+    subject_id: int
+    subject_name: str
+    total_quizzes: int
+    average_score: float
+    weak_topics: list[WeakTopic]
+
+class DashboardResponse(BaseModel):
+    subjects: list[SubjectStats]

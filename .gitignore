@@ -9,6 +9,8 @@ __pycache__/
 # Env files
 .env
 
+study_companion.db
+
 # ChromaDB data
 chroma_data/
 

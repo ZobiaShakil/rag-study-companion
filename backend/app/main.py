@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.api.routes_upload import router as upload_router
+
 from app.core.logging_config import setup_logging
 from app.config import get_settings
+from app.api.routes_upload import router as upload_router
 from app.api.routes_qa import router as qa_router
 from app.api.routes_quiz import router as quiz_router
+from app.api.routes_subjects import router as subjects_router
+from app.models.database import init_db
 
 logger = setup_logging()
 
@@ -17,6 +20,8 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Study Companion backend...")
     logger.info(f"Chroma persist dir: {settings.chroma_persist_dir}")
     logger.info(f"Embedding model: {settings.embedding_model}")
+    await init_db()
+    logger.info("Database initialized.")
     yield
     logger.info("Shutting down Study Companion backend...")
 
@@ -36,6 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(subjects_router)
 app.include_router(upload_router)
 app.include_router(qa_router)
 app.include_router(quiz_router)
