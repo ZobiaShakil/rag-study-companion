@@ -1,14 +1,45 @@
 import logging
 import json
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import QuizRequest, QuizResponse, MCQQuestion, MCQOption
+from app.models.schemas import QuizRequest, QuizResponse, MCQQuestion, MCQOption, QuizSessionCreate
 from app.services.embedding_service import query_collection
 from app.services.llm_service import generate_quiz
+from app.models.database import get_db, QuizSession, QuizResult
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends
 
 logger = logging.getLogger("study_companion")
 
 router = APIRouter(prefix="/quiz", tags=["Quiz"])
 
+@router.post("/sessions")
+async def save_quiz_session(
+    data: QuizSessionCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    session = QuizSession(
+        subject_id=data.subject_id,
+        file_id=data.file_id,
+        score=data.score,
+        total=data.total
+    )
+    db.add(session)
+    await db.flush()  # get session.id before committing
+
+    for r in data.results:
+        result = QuizResult(
+            session_id=session.id,
+            question=r.get("question", ""),
+            correct_answer=r.get("correct_answer", ""),
+            user_answer=r.get("user_answer", ""),
+            is_correct=r.get("is_correct", False),
+            topic=r.get("topic", None)
+        )
+        db.add(result)
+
+    await db.commit()
+    logger.info(f"Saved quiz session: score {data.score}/{data.total}")
+    return {"message": "Session saved", "session_id": session.id}
 
 @router.post("/generate", response_model=QuizResponse)
 async def generate_quiz_endpoint(request: QuizRequest):
@@ -41,6 +72,9 @@ async def generate_quiz_endpoint(request: QuizRequest):
             if cleaned.startswith("json"):
                 cleaned = cleaned[4:]
         cleaned = cleaned.strip()
+
+        # temporary debug — remove after fixing
+        logger.error(f"Raw Gemini response: {cleaned}")
 
         questions_data = json.loads(cleaned)
 

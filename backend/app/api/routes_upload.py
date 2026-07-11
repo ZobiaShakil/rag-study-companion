@@ -57,8 +57,8 @@ async def upload_file(
         if not chunks:
             raise HTTPException(status_code=422, detail="No text could be extracted from this file.")
 
-        collection_name = Path(file.filename).stem.lower().replace(" ", "_")
-
+# Change this line in your routes_upload.py
+        collection_name = f"sub_{subject_id}_{Path(file.filename).stem.lower().replace(' ', '_')}"
         store_chunks(chunks, collection_name)
 
         # Save file record to database

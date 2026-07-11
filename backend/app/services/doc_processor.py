@@ -63,7 +63,11 @@ def split_into_chunks(
         words = text.split()
 
         if len(words) <= chunk_size:
-            final_chunks.append(raw)
+            final_chunks.append(TextChunk(
+                text=text,
+                source=raw.source,  # Keeps it bound to your updated reference
+                page=raw.page
+            ))
             continue
 
         start = 0

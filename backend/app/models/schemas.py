@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 class UploadResponse(BaseModel):
@@ -12,6 +12,7 @@ class UploadResponse(BaseModel):
 class AskRequest(BaseModel):
     question: str
     collection_name: str
+    subject_id: int
     top_k: Optional[int] = 3
 
 

@@ -1,0 +1,145 @@
+.sidebar {
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--navbar-height));
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-upload-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-hover); /* Matches the elevated surface */
+  color: var(--text-primary);       /* Bright text */
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.sidebar-upload-btn:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.sidebar-upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebar-error {
+  margin: 8px 12px;
+  padding: 8px 12px;
+  background: var(--danger-light);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.sidebar-uploading {
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-uploading-bar {
+  height: 3px;
+  background: var(--primary-light);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sidebar-uploading-bar::after {
+  content: '';
+  position: absolute;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 99px;
+  animation: slide 1s infinite linear;
+}
+
+@keyframes slide {
+  to { left: 100%; }
+}
+
+.sidebar-files {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.sidebar-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--text-secondary); /* Upgraded from tertiary for legibility */
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.sidebar-file {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: var(--text-primary);
+}
+
+.sidebar-file:hover {
+  background: var(--bg);
+}
+
+.sidebar-file.active {
+  background: var(--primary-light);
+  color: var(--primary); /* Vibrant purple text for readability */
+  font-weight: 500;
+}
+
+.sidebar-file-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.sidebar-file-name {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

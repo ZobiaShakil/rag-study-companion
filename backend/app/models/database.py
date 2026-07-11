@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Text, Integer, String, Float, Boolean, ForeignKey, DateTime
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -17,6 +17,7 @@ class Subject(Base):
 
     files = relationship("SubjectFile", back_populates="subject", cascade="all, delete")
     quiz_sessions = relationship("QuizSession", back_populates="subject", cascade="all, delete")
+    chat_messages = relationship("ChatMessage", back_populates="subject", cascade="all, delete")
 
 
 class SubjectFile(Base):
@@ -60,6 +61,16 @@ class QuizResult(Base):
 
     session = relationship("QuizSession", back_populates="results")
 
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    role = Column(String(20), nullable=False)  # "user" or "model"
+    content = Column(Text, nullable=False)     # Now tracks correctly using SQLAlchemy Text type
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    subject = relationship("Subject", back_populates="chat_messages")
 
 def get_database_url() -> str:
     return "sqlite+aiosqlite:///./study_companion.db"

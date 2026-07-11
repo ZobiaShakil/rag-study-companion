@@ -8,7 +8,7 @@ __pycache__/
 
 # Env files
 .env
-
+.env.local
 study_companion.db
 
 # ChromaDB data

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.models.database import get_db, Subject, SubjectFile, QuizSession, QuizResult
 from app.models.schemas import SubjectCreate, SubjectResponse, FileResponse, DashboardResponse, SubjectStats, WeakTopic
+from app.services.embedding_service import get_chroma_client
 
 logger = logging.getLogger("study_companion")
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
@@ -59,10 +60,28 @@ async def get_subject_files(subject_id: int, db: AsyncSession = Depends(get_db))
 
 @router.delete("/{subject_id}")
 async def delete_subject(subject_id: int, db: AsyncSession = Depends(get_db)):
+    # Get subject
     result = await db.execute(select(Subject).where(Subject.id == subject_id))
     subject = result.scalar_one_or_none()
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found.")
+
+    # Get all files before deleting so we have collection names
+    files_result = await db.execute(
+        select(SubjectFile).where(SubjectFile.subject_id == subject_id)
+    )
+    files = files_result.scalars().all()
+
+    # Delete ChromaDB collections for each file
+    chroma = get_chroma_client()
+    for file in files:
+        try:
+            chroma.delete_collection(file.collection_name)
+            logger.info(f"Deleted ChromaDB collection: {file.collection_name}")
+        except Exception as e:
+            logger.warning(f"Could not delete collection {file.collection_name}: {e}")
+
+    # Delete subject from SQLite (cascade handles files, sessions, results)
     await db.delete(subject)
     await db.commit()
     return {"message": "Subject deleted"}

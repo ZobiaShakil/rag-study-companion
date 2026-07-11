@@ -1,0 +1,48 @@
+/* Update your navigation header styles */
+.navbar {
+  height: var(--navbar-height);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+
+  /* CRITICAL FIXES TO PIN NAVBAR */
+  position: fixed;     /* Locks the navbar relative to the viewport window */
+  top: 0;              /* Pins it exactly to the very top edge */
+  left: 0;             /* Stretches it starting from the left edge */
+  width: 100%;         /* Forces it to span the full width of the browser */
+  z-index: 1000;       /* Layer depth anchor to keep it floating above cards/text */
+}
+
+.navbar-brand {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 4px;
+}
+
+.navbar-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: background 0.15s;
+}
+
+.navbar-link:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.navbar-link.active {
+  background: var(--primary-light);
+  color: var(--primary); /* <-- SWAPPED from primary-dark for high readability */
+  font-weight: 500;
+}

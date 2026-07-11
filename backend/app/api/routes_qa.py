@@ -1,8 +1,12 @@
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from app.models.database import get_db, ChatMessage 
 from app.models.schemas import AskRequest, AskResponse, SourceChunk
 from app.services.embedding_service import query_collection
-from app.services.llm_service import ask_question
+from app.services.llm_service import generate_chat_response
 
 logger = logging.getLogger("study_companion")
 
@@ -10,12 +14,12 @@ router = APIRouter(prefix="/qa", tags=["Q&A"])
 
 
 @router.post("/ask", response_model=AskResponse)
-async def ask(request: AskRequest):
+async def ask(request: AskRequest, db: AsyncSession = Depends(get_db)):
     if not request.question.strip():
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     try:
-        # Step 1: Retrieve relevant chunks from ChromaDB
+        # Step 1: Retrieve relevant chunks from ChromaDB for RAG context
         chunks = query_collection(
             question=request.question,
             collection_name=request.collection_name,
@@ -28,10 +32,22 @@ async def ask(request: AskRequest):
                 detail=f"No content found in collection '{request.collection_name}'. Did you upload a file?"
             )
 
-        # Step 2: Send to Gemini with context
-        answer = ask_question(request.question, chunks)
+        # Step 3: Send to conversational Gemini service without prior chat history.
+        answer = generate_chat_response(
+            question=request.question,
+            context_chunks=chunks,
+            chat_history=[]
+        )
 
-        # Step 3: Format sources for citation
+        # Step 4: Save the current QA exchange back to history logs
+        user_msg = ChatMessage(subject_id=request.subject_id, role="user", content=request.question)
+        model_msg = ChatMessage(subject_id=request.subject_id, role="model", content=answer)
+        
+        db.add(user_msg)
+        db.add(model_msg)
+        await db.commit()
+
+        # Step 5: Format source chunks for frontend citation panels
         sources = [
             SourceChunk(
                 text=chunk["text"],
