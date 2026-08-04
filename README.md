@@ -120,6 +120,4 @@ http://localhost:5173
 
 - The backend uses a local SQLite file and ChromaDB persistence, so data remains across restarts.
 
-## License
 
-This project is currently provided as-is. Add your own license file if needed.
