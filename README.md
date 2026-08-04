@@ -3,7 +3,7 @@
 An AI-powered study assistant that lets students upload course materials, generate embeddings, and ask questions based on those notes. The project combines a FastAPI backend with a React + Vite frontend and uses ChromaDB for retrieval-augmented generation.
 
 ## Demo
-[Watch the demo video]([https://github.com/ZobiaShakil/rag-study-companion/blob/main/rag-study-companion%20(1).mp4])
+[Watch the demo video](https://github.com/ZobiaShakil/rag-study-companion/blob/main/rag-study-companion%20(1).mp4)
 
 ## Key Features
 
