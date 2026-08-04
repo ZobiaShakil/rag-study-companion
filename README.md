@@ -2,6 +2,9 @@
 
 An AI-powered study assistant that lets students upload course materials, generate embeddings, and ask questions based on those notes. The project combines a FastAPI backend with a React + Vite frontend and uses ChromaDB for retrieval-augmented generation.
 
+## Demo
+[Watch the demo video](your-link-here)
+
 ## Key Features
 
 - Create subjects to organize course material
@@ -11,6 +14,7 @@ An AI-powered study assistant that lets students upload course materials, genera
 - Use Gemini / Google Generative AI for grounded responses
 - Generate quizzes from uploaded study material
 - Track quiz sessions and weak topics
+- Multi-turn conversational Q&A — ask follow-up questions naturally, powered by Gemini's native chat API with per-subject conversation history
 
 ## Architecture
 
@@ -114,7 +118,7 @@ http://localhost:5173
 - `GET /subjects/dashboard` — dashboard stats and weak topics
 - `POST /upload/` — upload a file to a subject
 - `POST /qa/ask` — ask a question against a subject collection
-- `POST /quiz/` — generate quiz questions from uploaded content
+- `POST /quiz/generate` — generate quiz questions from uploaded content
 
 ## Notes
 
