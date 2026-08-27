@@ -48,7 +48,7 @@ export default function QuizPanel({ collectionName, subjectId, fileId }) {
       correct_answer: current.correct_answer,
       user_answer: label,
       is_correct: isCorrect,
-      topic: null
+      topic: current.topic || null
     }])
   }
 

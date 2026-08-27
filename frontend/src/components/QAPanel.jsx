@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { askQuestion } from '../api/qa'
+import { askQuestion, getHistory } from '../api/qa'
 import CitationCard from './CitationCard'
 import './QAPanel.css'
 
@@ -14,6 +14,21 @@ export default function QAPanel({ collectionName, subjectId }) {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  useEffect(() => {
+    // Load persisted chat history for this subject
+    const loadHistory = async () => {
+      if (!subjectId) return
+      try {
+        const history = await getHistory(subjectId)
+        const mapped = history.map(h => ({ role: h.role, text: h.content }))
+        setMessages(mapped)
+      } catch (err) {
+        console.error('Failed to load chat history', err)
+      }
+    }
+    loadHistory()
+  }, [subjectId])
 
   const handleAsk = async (e) => {
     e.preventDefault()

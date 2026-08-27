@@ -84,9 +84,6 @@ export default function DashboardPage() {
                       {subject.weak_topics.map((topic, i) => (
                         <div key={i} className="dashboard-weak-item">
                           <span className="dashboard-weak-name">{topic.topic}</span>
-                          <span className="dashboard-weak-count">
-                            {topic.wrong_count} wrong
-                          </span>
                         </div>
                       ))}
                     </div>

@@ -9,3 +9,8 @@ export const askQuestion = async (question, collectionName, subjectId, topK = 3)
   })
   return res.data
 }
+
+export const getHistory = async (subjectId) => {
+  const res = await client.get(`/qa/history/${subjectId}`)
+  return res.data
+}
