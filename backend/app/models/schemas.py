@@ -27,6 +27,12 @@ class AskResponse(BaseModel):
     sources: list[SourceChunk]
 
 
+class ChatMessageResponse(BaseModel):
+    role: str
+    content: str
+    timestamp: datetime
+
+
 class QuizRequest(BaseModel):
     collection_name: str
     num_questions: Optional[int] = 5
@@ -43,6 +49,7 @@ class MCQQuestion(BaseModel):
     options: list[MCQOption]
     correct_answer: str
     explanation: str
+    topic: str
 
 
 class QuizResponse(BaseModel):
@@ -95,7 +102,6 @@ class QuizSessionResponse(BaseModel):
 # --- Dashboard schemas ---
 class WeakTopic(BaseModel):
     topic: str
-    wrong_count: int
 
 class SubjectStats(BaseModel):
     subject_id: int

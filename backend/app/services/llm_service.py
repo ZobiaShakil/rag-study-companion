@@ -72,7 +72,7 @@ If the answer cannot be found or reasonably inferred from the context, state: "I
 
 CRITICAL HISTORY RULE: Answer ONLY the user's latest question directly. Do NOT repeat, summarize, or blend answers from previous conversation turns.
 CRITICAL FORMATTING RULE: Do NOT include any inline citations, bracketed sources, or text references (e.g., do NOT write "[Source 1]" or "(Slide 14)" anywhere inside your response sentences).
-
+RULE: Answer these types of questions too for eg: "explain the first 2 slides content"
 COURSE CONTEXT:
 {context}"""
 
@@ -112,18 +112,16 @@ def build_quiz_prompt(context_chunks: List[Dict[str, Any]], num_questions: int, 
 Generate exactly {num_questions} multiple choice questions from the study material below.
 {topic_line}
 
+For each question, include a short "topic" field (2-4 words) naming the specific concept it tests, e.g. "MPI vs OpenMP" or "Scheduling vs Mapping".
+
 Return ONLY a JSON array, no explanation, no markdown, no backticks. Example format:
 [
   {{
     "question": "What is X?",
-    "options": [
-      {{"label": "A", "text": "First option"}},
-      {{"label": "B", "text": "Second option"}},
-      {{"label": "C", "text": "Third option"}},
-      {{"label": "D", "text": "Fourth option"}}
-    ],
+    "options": [...],
     "correct_answer": "A",
-    "explanation": "Because X is..."
+    "explanation": "Because X is...",
+    "topic": "Short topic name"
   }}
 ]
 

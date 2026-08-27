@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, case
 from app.models.database import get_db, Subject, SubjectFile, QuizSession, QuizResult
 from app.models.schemas import SubjectCreate, SubjectResponse, FileResponse, DashboardResponse, SubjectStats, WeakTopic
 from app.services.embedding_service import get_chroma_client
@@ -130,8 +130,9 @@ async def get_dashboard(db: AsyncSession = Depends(get_db)):
             if r.topic:
                 topic_counts[r.topic] = topic_counts.get(r.topic, 0) + 1
 
+        # Return only the topic names, sorted by descending wrong_count, top 5
         weak_topics = [
-            WeakTopic(topic=t, wrong_count=c)
+            WeakTopic(topic=t)
             for t, c in sorted(topic_counts.items(), key=lambda x: -x[1])
         ][:5]
 
